@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= article.title %></title>
+    <style>
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1><%= article.title %></h1>
+    <p><%= article.content %></p>
+
+    <div>
+        <p>Likes: <span id="like-count"><%= article.likeCount %></span></p>
+        <button id="like-button">Like</button>
+    </div>
+
+    <script>
+        document.getElementById('like-button').addEventListener('click', async () => {
+            try {
+                const response = await fetch(`/api/articles/<%= article._id %>/likes`, { method: 'POST' });
+                const data = await response.json();
+                document.getElementById('like-count').textContent = data.likes;
+            } catch (error) {
+                console.error('Error liking the article:', error);
+            }
+        });
+    </script>
+</body>
+</html>

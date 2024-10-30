@@ -1,0 +1,13 @@
+{
+  "name": "norebase-challenge",
+  "version": "1.0.0",
+  "description": "Norebase Backend Engineering Technical Challenge",
+  "main": "app.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest"
+  },
+  "author": "Olumide Adenigba",
+  "license": "ISC"
+}

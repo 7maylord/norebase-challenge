@@ -36,3 +36,15 @@ export const incrementLike = async (req, res) => {
         res.status(500).json({ error: 'Internal Server error' });
     }
 };
+
+// Create a new article
+export const createArticle = async (req, res) => {
+    try {
+        const { title, content } = req.body;
+        const article = new Article({ title, content });
+        await article.save();
+        res.status(201).json({ message: 'Article created successfully', article });
+    } catch (error) {
+        res.status(400).json({ error: 'Error creating article' });
+    }
+};

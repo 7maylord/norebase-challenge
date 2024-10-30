@@ -1,6 +1,6 @@
 import express from 'express';
 import articleRoutes from './routes/articleRoutes.js'
-import path, { resolve } from 'path';
+import path from 'path';
 
 const app = express();
 
@@ -10,13 +10,11 @@ app.use(express.urlencoded({ extended: true }));
 
 //Views
 app.set('view engine', 'ejs');
-app.set('views', path.join(path.resolve(), 'views'));
-
+app.set('views', path.join(path.resolve(), 'src', 'views'));
 
 // Routes
 app.use("/api", articleRoutes);
 
-//Later for views
 // renders the home page
 app.get('/', (req, res) => {
   res.status(200);
@@ -34,9 +32,5 @@ app.all("*", (req, res) => {
   });
 });
 
-//Later for views
-// app.all('*', (req, res) => {
-//   res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
-// });
 
 export default app;

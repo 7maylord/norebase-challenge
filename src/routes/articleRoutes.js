@@ -1,5 +1,5 @@
 import express from 'express';
-import { getArticle, getLikes, incrementLike } from '../controllers/articleController.js';
+import { createArticle, getArticle, getLikes, incrementLike } from '../controllers/articleController.js';
 
 const router = express.Router();
 
@@ -11,5 +11,8 @@ router.get('/articles/:id/likes', getLikes);
 
 // API route to increment like count
 router.post('/articles/:id/likes', incrementLike);
+
+// API route to create a new article
+router.post('/articles', createArticle);
 
 export default router;

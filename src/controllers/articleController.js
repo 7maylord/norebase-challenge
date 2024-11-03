@@ -1,4 +1,3 @@
-import { json } from "express";
 import Article from "../models/article.js";
 
 // Get the article page with the like button

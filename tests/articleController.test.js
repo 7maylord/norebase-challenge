@@ -1,5 +1,5 @@
 import request from 'supertest';
-import mongoose, { get, Types } from 'mongoose';
+import mongoose from 'mongoose';
 import app from '../src/app.js';
 import connectionToMongodb from '../src/config/db.js'; 
 import Article from '../src/models/article.js'; 

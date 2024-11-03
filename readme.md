@@ -1,32 +1,17 @@
-# UrlChop URL Shortener
+# Like Button API
 
-Brief is the new black. UrlChop is a simple tool that makes URLs as short as possible. Inspired by the importance of brevity in today's world, This project is built as capstone project for [AltSchool](https://altschoolafrica.com/)
+This project is a simple API for an article "Like" button feature. Users can view the total number of likes on an article and increment it by pressing a button. The project uses Express.js, MongoDB, and EJS templating to serve views and provides REST API endpoints for interacting with the like feature.
 
-## Features
-
-- **URL Shortening**: Paste a long URL into UrlChop and get a shorter URL automatically generated.
-- **Custom URLs**: Customize your shortened URLs to reflect your brand or content.
-- **QR Code Generation**: Generate QR codes for your shortened URLs and download them for use in promotional materials.
-- **Analytics**: Track the performance of your shortened URLs, including the number of clicks and their origins.
-- **Link History**: View the history of links you’ve created for easy reference and reuse.
 
 ## Requirements
 
 - npm
--   **Frontend**: React, and TypeScript
--   **Backend**: Node.js, TypeScript, Express, MongoDB, and Redis.
--   **Deployment**: Vercel
-
-## Usage
-
-### Web Interface
-
--   Frontend application is deployed  at [urlchop.vercel.app](https://urlchop.vercel.app/)
-
-### API
-
-- Backend is deployed at [uchop.onrender.com](https://uchop.onrender.com)
-- Deployed documentation is at [uchop.onrender.com/api-docs](https://uchop.onrender.com/api-docs)
+- Node.js
+- Express.js
+- MongoDB (Mongoose for ODM)
+- EJS for templating views
+- Nodemon
+- Jest and Supertest for testing
 
 
 ## Setup and Installation
@@ -34,71 +19,83 @@ Brief is the new black. UrlChop is a simple tool that makes URLs as short as pos
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/7maylord/urlchop.git
-   cd urlchop
+   git clone https://github.com/7maylord/norebase-challenge.git
+   cd norebase-challenge
 
 2. Install dependencies:
     ```sh
-    cd client-app && npm install
-    cd ../server-app && npm install
+    npm install
     ```
 
 3. Set up environment variables:
-    Create a `.env` file in the server-app directory and add the following:
+    Create a `.env` file in the root directory and add the following:
     ```env
     # Server configuration
     PORT=3030
 
     # Database configuration
-    REDIS_URL=redis://localhost:6379
-    REDIS_HOST=localhost
-    REDIS_PORT=6379
-    REDIS_PASSWORD=your_redis_password
-    MONGODB_URI=mongodb://localhost:27017/urlchop
-
-    # Rate limiter configuration
-    RATE_LIMIT_WINDOW=15
-    RATE_LIMIT_MAX=100
-        
-    JWT_SECRET=your_jwt_secret
-    QR_API_URL=https://api.qrserver.com/v1/create-qr-code/
-      ```
-    
-    Create a `.env` file in the client-app directory and add the following:
-    ```env
-    VITE_APP_ENV=development
-
-    #this is your backend server
-    VITE_API_URL=http://localhost:3030/api 
-
-    #this is your frontend server
-    VITE_APP_URL=http://localhost:5174  
+    MONGODB_URI=mongodb://localhost:27017/yourdbname
     ```
 
-4. Build the Project:
+4. Development Mode: To run the server in development mode.
     ```sh
-    # Backend Server
-    npm run build
-    # Frontend Server
-    npm run build
-    ```
-5. Development Mode: To run the server in development mode with hot-reloading.
-    ```sh
-    # Backend Server
-    npm run start
-    # Frontend Server
-    npm run dev
+   npm run dev
     ```
 
-## API Documentation
-The API is documented using OpenAPI. You can view the documentation on [http://localhost:3030/api-docs](http://localhost:3030/api-docs) after starting the server.
+5. Access the API: The server should now be running on http://localhost:3030.
+
+6. Running Tests: 
+To run the tests, use:
+
+```bash
+npm run test
+```
+
+## Usage
+### Endpoints
+- Create an Article
+    - POST `/api/articles`
+    - Body: `{ "title": "Article Title", "content": "Article Content" }`
+    - Response: `{ "message": "Article created successfully", "article": {...} }`
+
+- Get Like Count
+    - GET `/api/articles/:id/likes`
+    - Response: `{ "likes": <like count> }`
+
+- Increment Like Count
+    - POST `/api/articles/:id/likes`
+    - Response: `{ "likes": <updated like count> }`
+
+- Render Article Page
+    - GET `/api/articles/:id`
+    - Renders an article page showing the title, content, like count, and a "Like" button.
 
 
-# Available Scripts
-- npm start: Runs the compiled server.
-- npm run dev: Runs the server in development mode using ts-node-dev.
-- npm run build: Compiles the TypeScript code.
-- npm test: Runs the tests.
+### Example Requests with cURL
+- Create an Article:
+```bash
+curl -X POST http://localhost:3030/api/articles -H "Content-Type: application/json" -d '{"title": "My New Article", "content": "Some interesting content"}'
+```
 
-# Contributing
+- Get Like Count:
+```bash
+curl http://localhost:3030/api/articles/<ARTICLE_ID>/likes
+```
+
+- Increment Like Count:
+```bash
+curl -X POST http://localhost:3030/api/articles/<ARTICLE_ID>/likes
+```
+Replace <ARTICLE_ID> with the actual ID of the article.
+
+
+## EJS Template Rendering
+To view the article page with the "Like" button, go to:
+
+```bash
+http://localhost:3000/articles/{articleId}
+```
+Replace {articleId} with an existing article ID in the database.
+
+## Contributing
 Contributions are welcome! Please open an issue or submit a pull request for any changes.

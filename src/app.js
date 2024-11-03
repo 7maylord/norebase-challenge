@@ -19,7 +19,7 @@ app.use("/api", articleRoutes);
 app.get('/', (req, res) => {
   res.status(200);
   res.json({
-    message: "Welcome to Olumide Article API",
+    message: "Welcome to Olumide Like Button API",
   });
 });
 

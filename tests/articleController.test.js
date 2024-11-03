@@ -1,14 +1,8 @@
-import express from 'express';
 import request from 'supertest';
-import mongoose from 'mongoose';
+import mongoose, { get, Types } from 'mongoose';
 import app from '../src/app.js';
 import connectionToMongodb from '../src/config/db.js'; 
-import articleRoutes from '../src/routes/articleRoutes.js'; 
 import Article from '../src/models/article.js'; 
-
-// const app = express();
-// app.use(express.json());
-// app.use('/api', articleRoutes);
 
 // Connect to a test database before running tests
 beforeAll(async () => {
@@ -55,5 +49,28 @@ describe('Article API Endpoints', () => {
         // Verify that the count increased in the database
         const updatedArticle = await Article.findById(articleId);
         expect(updatedArticle.likeCount).toBe(1); // Check if the like count in DB is updated
+    });
+
+    // Test to get likes for a non-existent article
+    it('should return a 404 error for a non-existent article', async () => {
+        const nonExistentId = new mongoose.Types.ObjectId(); // Generate a random ObjectId
+        const res = await request(app).get(`/api/articles/${nonExistentId}/likes`);
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Article not found'); 
+    });
+
+    // Test to increment likes for a non-existent article
+    it('should return a 404 error when incrementing likes for a non-existent article', async () => {
+        const nonExistentId = new mongoose.Types.ObjectId(); // Generate a random ObjectId
+        const res = await request(app).post(`/api/articles/${nonExistentId}/likes`);
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Article not found'); 
+    });
+
+    // Test to handle invalid data when creating an article
+    it('should return a 400 error when the article data is invalid', async () => {
+        const res = await request(app).post('/api/articles').send({}); // Sending empty data
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('Validation error'); 
     });
 });

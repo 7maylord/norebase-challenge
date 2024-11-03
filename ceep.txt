@@ -1,0 +1,111 @@
+import request from 'supertest';
+import Article from '../src/models/article.js';
+import app from '../src/app.js';
+
+// Mocking the Article model
+jest.mock('../src/models/article');
+
+describe('Article Controller', () => {
+  
+  beforeEach(() => {
+    jest.clearAllMocks(); // Clear mocks before each test
+  });
+
+  describe('POST /articles', () => {
+    it('should create a new article and return it', async () => {
+      // Mock the Article model to simulate saving an article
+      const mockArticle = { _id: '1', title: 'Test Article', likeCount: 0 };
+      Article.create.mockResolvedValue(mockArticle);
+
+      const response = await request(app)
+        .post('/articles')
+        .send({ title: 'Test Article' });
+
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveProperty('title', 'Test Article');
+      expect(response.body).toHaveProperty('likeCount', 0);
+      expect(Article.create).toHaveBeenCalledWith({ title: 'Test Article' });
+    });
+
+    it('should handle errors when creating a new article', async () => {
+      // Mock an error
+      Article.create.mockRejectedValue(new Error('Failed to create article'));
+
+      const response = await request(app)
+        .post('/articles')
+        .send({ title: 'Test Article' });
+
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty('error', 'Failed to create article');
+    });
+  });
+
+  describe('POST /articles/:id/like', () => {
+    it('should increment the like count for an article', async () => {
+      const mockArticle = { _id: '1', title: 'Test Article', likeCount: 1 };
+      Article.findById.mockResolvedValue(mockArticle);
+      Article.findByIdAndUpdate.mockResolvedValue({ ...mockArticle, likeCount: 2 });
+
+      const response = await request(app).post('/articles/1/like');
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('message', 'Article liked');
+      expect(response.body).toHaveProperty('likeCount', 2);
+      expect(Article.findById).toHaveBeenCalledWith('1');
+      expect(Article.findByIdAndUpdate).toHaveBeenCalledWith(
+        '1',
+        { $inc: { likeCount: 1 } },
+        { new: true }
+      );
+    });
+
+    it('should return 404 if the article is not found', async () => {
+      Article.findById.mockResolvedValue(null); // Mock no article found
+
+      const response = await request(app).post('/articles/1/like');
+
+      expect(response.status).toBe(404);
+      expect(response.body).toHaveProperty('error', 'Article not found');
+    });
+
+    it('should handle errors when liking an article', async () => {
+      Article.findById.mockRejectedValue(new Error('Failed to like article'));
+
+      const response = await request(app).post('/articles/1/like');
+
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty('error', 'Failed to like article');
+    });
+  });
+
+  describe('GET /articles/:id/likes', () => {
+    it('should return the like count of an article', async () => {
+      const mockArticle = { _id: '1', title: 'Test Article', likeCount: 10 };
+      Article.findById.mockResolvedValue(mockArticle);
+
+      const response = await request(app).get('/articles/1/likes');
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('likeCount', 10);
+      expect(Article.findById).toHaveBeenCalledWith('1');
+    });
+
+    it('should return 404 if the article is not found for like count', async () => {
+      Article.findById.mockResolvedValue(null);
+
+      const response = await request(app).get('/articles/1/likes');
+
+      expect(response.status).toBe(404);
+      expect(response.body).toHaveProperty('error', 'Article not found');
+    });
+
+    it('should handle errors when retrieving the like count', async () => {
+      Article.findById.mockRejectedValue(new Error('Failed to get like count'));
+
+      const response = await request(app).get('/articles/1/likes');
+
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty('error', 'Failed to get like count');
+    });
+  });
+});

@@ -1,4 +1,5 @@
 import Article from "../models/article.js";
+import { validationResult } from 'express-validator';
 
 // Get the article page with the like button
 export const getArticle = async (req, res) => {
@@ -40,6 +41,11 @@ export const incrementLike = async (req, res) => {
 // Create a new article
 export const createArticle = async (req, res) => {
     try {
+         // Validate request body
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
         const { title, content } = req.body;
         const article = new Article({ title, content });
         await article.save();
